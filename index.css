@@ -1,0 +1,95 @@
+:root {
+    --sky-day: #87CEEB;
+    --sun-color: #FFD700;
+    --text-day: #2c3e50;
+    --sky-night: #0c1445;
+    --moon-color: #f4f4f4;
+    --text-night: #f0f0f0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: var(--sky-night);
+    color: var(--text-night);
+    transition: background-color 1.5s ease-in-out, color 1.5s ease-in-out;
+    overflow: hidden;
+    position: relative;
+}
+
+#stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.star {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    animation: twinkle 4s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.5; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+}
+
+.scene-container {
+    text-align: center;
+}
+
+#celestial-body {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background-color: var(--moon-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: background-color 1.5s ease-in-out, box-shadow 1.5s ease-in-out;
+    box-shadow: 0 0 20px 5px rgba(244, 244, 244, 0.3);
+}
+
+#percentage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#percentage {
+    font-size: 4rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#status-text {
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#simulation-notice {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    background-color: rgba(0,0,0,0.3);
+    padding: 10px;
+    display: none;
+}
