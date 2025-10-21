@@ -7,7 +7,7 @@ const char* password = "Your_password";
 WebServer server(80);
 const int ldrPin = 32;
 
-// Página HTML, CSS y JS incrustados
+// Insert HTML, CSS and JS
 const char htmlPage[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="es">
@@ -199,7 +199,7 @@ updateLDR();
 </html>
 )rawliteral";
 
-// Manejadores
+// Handlers
 void handleRoot() {
   server.send(200, "text/html", htmlPage);
 }
@@ -215,12 +215,12 @@ void setup() {
   analogSetAttenuation(ADC_11db);
   
   WiFi.begin(ssid, password);
-  Serial.print("Conectando a WiFi");
+  Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nConectado!");
+  Serial.println("\nConnected!");
   Serial.print("IP: ");
   Serial.println(WiFi.localIP());
 
