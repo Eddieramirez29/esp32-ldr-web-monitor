@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char* ssid = "Your_SSID";
-const char* password = "Your_password";
+const char* ssid = "Mega-2.4G-76AE";
+const char* password = "XQfUeRRC3q";
 
 WebServer server(80);
 const int ldrPin = 32;
@@ -184,8 +184,9 @@ function updateLDR()
         .then(data =>
         {
             const val = parseInt(data);
-            const pct = Math.round((val / 4095) * 100);
-            updateUI(pct);
+            const pct = (val / 4095) * 100;
+            const light_level = pct.toFixed(2);
+            updateUI(light_level);
         })
         .catch(() =>
         {

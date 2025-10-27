@@ -75,8 +75,9 @@ function updateLDR()
         .then(data =>
         {
             const val = parseInt(data);
-            const pct = Math.round((val / 4095) * 100);
-            updateUI(pct);
+            const pct = (val / 4095) * 100;
+            const light_level = pct.toFixed(2);
+            updateUI(light_level);
         })
         .catch(() =>
         {
