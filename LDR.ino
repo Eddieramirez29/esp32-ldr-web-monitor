@@ -7,7 +7,7 @@ const char* password = "Your_password";
 WebServer server(80);
 const int ldrPin = 32;
 
-// Insert HTML, CSS and JS
+// HTML, CSS y JS incrustados (sin modo simulación)
 const char htmlPage[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="es">
@@ -60,6 +60,11 @@ body {
     0%, 100% { opacity: 0.5; transform: scale(0.8); }
     50% { opacity: 1; transform: scale(1); }
 }
+.objects_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .scene-container {
     text-align: center;
 }
@@ -94,30 +99,18 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
-#simulation-notice {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-    color: #fff;
-    background-color: rgba(0,0,0,0.3);
-    padding: 10px;
-    display: none;
-}
 </style>
 </head>
 <body>
 <div id="stars-container"></div>
-<div class="scene-container">
-    <div id="celestial-body">
-        <div id="percentage-container">
-            <span id="percentage">0%</span>
-            <span id="status-text">Noche</span>
-        </div>
+<div class="objects_container">
+    <div class="scene-container">
+        <div id="celestial-body"></div>
     </div>
-</div>
-<div id="simulation-notice">
-    Modo simulación: Mueve el mouse para cambiar la luz.
+    <div id="percentage-container">
+        <span id="percentage">0%</span>
+        <span id="status-text">Noche</span>
+    </div>
 </div>
 <script>
 const body = document.body;
@@ -125,11 +118,13 @@ const celestialBody = document.getElementById("celestial-body");
 const percentageText = document.getElementById("percentage");
 const statusText = document.getElementById("status-text");
 const starsContainer = document.getElementById("stars-container");
-const simulationNotice = document.getElementById("simulation-notice");
-let simulationMode = false;
-function createStars() {
+
+// Genera estrellas aleatoriamente
+function createStars()
+{
     const starCount = 100;
-    for (let i = 0; i < starCount; i++) {
+    for (let i = 0; i < starCount; i++)
+    {
         const star = document.createElement("div");
         star.className = "star";
         const size = Math.random() * 2 + 1;
@@ -141,56 +136,64 @@ function createStars() {
         starsContainer.appendChild(star);
     }
 }
-function updateUI(pct) {
+
+// Actualiza la interfaz según el valor del LDR
+function updateUI(pct)
+{
     percentageText.innerText = pct + "%";
     const transitionFactor = pct / 100;
     const skyHue = 225 - 30 * transitionFactor;
     const skySaturation = 50 + 20 * transitionFactor;
     const skyLightness = 15 + 55 * transitionFactor;
     body.style.backgroundColor = `hsl(${skyHue}, ${skySaturation}%, ${skyLightness}%)`;
-    if (pct >= 50) {
+
+    if (pct >= 50)
+    {
         const sunBrightness = 50 + (pct - 50) / 2;
         const glowSize = 10 + (pct - 50);
         celestialBody.style.backgroundColor = `hsl(50, 100%, ${sunBrightness}%)`;
         celestialBody.style.boxShadow = `0 0 ${glowSize}px ${glowSize / 3}px hsla(50, 100%, ${sunBrightness}%, 0.7)`;
-        body.style.color = 'var(--text-day)';
+        body.style.color = "var(--text-day)";
         statusText.innerText = "Día";
         starsContainer.style.opacity = 1 - (pct - 50) / 50;
-    } else {
+    }
+    else
+    {
         const moonBrightness = 90 + (pct / 5);
         const glowSize = 10 + pct / 2;
         celestialBody.style.backgroundColor = `hsl(220, 30%, ${moonBrightness}%)`;
         celestialBody.style.boxShadow = `0 0 ${glowSize}px ${glowSize / 5}px hsla(220, 30%, ${moonBrightness}%, 0.5)`;
-        body.style.color = 'var(--text-night)';
+        body.style.color = "var(--text-night)";
         statusText.innerText = "Noche";
         starsContainer.style.opacity = 1;
     }
 }
-function updateLDR() {
-    if (simulationMode) return;
+
+// Obtiene valor real del LDR
+function updateLDR()
+{
     fetch("/ldr")
-        .then(response => {
-            if (!response.ok) throw new Error('Network error');
+        .then(response =>
+        {
+            if (!response.ok)
+            {
+                throw new Error("Network error");
+            }
             return response.text();
         })
-        .then(data => {
+        .then(data =>
+        {
             const val = parseInt(data);
             const pct = Math.round((val / 4095) * 100);
             updateUI(pct);
         })
-        .catch(() => {
-            console.warn("No se pudo conectar con el dispositivo. Activando modo simulación.");
-            activateSimulationMode();
+        .catch(() =>
+        {
+            console.warn("No se pudo conectar con el dispositivo LDR.");
         });
 }
-function activateSimulationMode() {
-    simulationMode = true;
-    simulationNotice.style.display = 'block';
-    window.addEventListener('mousemove', (event) => {
-        const pct = Math.round((event.clientX / window.innerWidth) * 100);
-        updateUI(pct);
-    });
-}
+
+// Inicialización
 createStars();
 setInterval(updateLDR, 500);
 updateLDR();
@@ -200,35 +203,40 @@ updateLDR();
 )rawliteral";
 
 // Handlers
-void handleRoot() {
-  server.send(200, "text/html", htmlPage);
+void handleRoot()
+{
+    server.send(200, "text/html", htmlPage);
 }
 
-void handleLDR() {
-  int valor = analogRead(ldrPin);
-  server.send(200, "text/plain", String(valor));
+void handleLDR()
+{
+    int valor = analogRead(ldrPin);
+    server.send(200, "text/plain", String(valor));
 }
 
-void setup() {
-  Serial.begin(115200);
-  analogReadResolution(12);
-  analogSetAttenuation(ADC_11db);
+void setup()
+{
+    Serial.begin(115200);
+    analogReadResolution(12);
+    analogSetAttenuation(ADC_11db);
   
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("\nConnected!");
-  Serial.print("IP: ");
-  Serial.println(WiFi.localIP());
+    WiFi.begin(ssid, password);
+    Serial.print("Connecting to WiFi");
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("\nConnected!");
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP());
 
-  server.on("/", handleRoot);
-  server.on("/ldr", handleLDR);
-  server.begin();
+    server.on("/", handleRoot);
+    server.on("/ldr", handleLDR);
+    server.begin();
 }
 
-void loop() {
-  server.handleClient();
+void loop()
+{
+    server.handleClient();
 }
