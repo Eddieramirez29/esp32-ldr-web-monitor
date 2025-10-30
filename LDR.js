@@ -4,6 +4,7 @@ const percentageText = document.getElementById("percentage");
 const statusText = document.getElementById("status-text");
 const starsContainer = document.getElementById("stars-container");
 
+
 // Genera estrellas aleatoriamente
 function createStars()
 {

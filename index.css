@@ -82,3 +82,27 @@ body {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
+/*Termometer*/
+
+#termometer
+{
+    margin-left: 50px;
+    border: 3px solid black;
+    height: 400px;
+    width: 50px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+#liquid
+{
+    margin-left: 1px;
+    height: 200px;
+    width: 49px; 
+    background-color: red;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
